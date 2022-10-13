@@ -40,19 +40,67 @@ export default {
 
   data() {
     return {
-      username: "",
-      password: "",
+      form: {
+        student_id: "13131",
+        password: '131313'
+      },
+      username: "1131313",
+      password: "3131313",
     };
   },
 
   methods: {
     loginhander() {
-      this.$axios.post("http://localhost:8080/api/mock",{'username':this.username,'password':this.password}).then(response => {
-        this.result = response.data
+      // let data =;
+
+      this.$axios.post("http://127.0.0.1:8880/app01/student/login",  {"student_id": "1234", "student_password": "yyyy"}
+      ).then(response => {
         console.log(response.data)
       }).catch(error => {
         console.log(error)
       })
+
+      // this.$axios.get("http://127.0.0.1:8880/index").
+      // then(response => {
+      //   this.result = response.data
+      //   console.log(response.data)
+      // }).catch(error => {
+      //   console.log(error)
+      // })
+
+
+      // this.$axios({
+      //   method: 'post',
+      //   url: 'http://127.0.0.1:8880/app01/student/login',
+      //   data: 'asas',
+      // }).then(response => {
+      //   console.log(response.data)
+      // }).catch(error => {
+      //   console.log(error)
+      // })
+
+
+      // this.$axios({
+      //     methods: 'post',
+      //     url: "http://127.0.0.1:8880/app01/student/login",
+      //     data: this.$qs.stringify({
+      //       username: 'andy',
+      //       meg: this.msg
+      //     })
+      //   }).then(response => {
+      //   this.result = response.data
+      //   console.log(response.data)
+      // }).catch(error => {
+      //   console.log(error)
+      // })
+
+
+      // this.$axios.post("http://localhost:8080/api/mock",{'username':this.username,'password':this.password}).then(response => {
+      //   this.result = response.data
+      //   console.log(response.data)
+      // }).catch(error => {
+      //   console.log(error)
+      // })
 
       if (this.result === 1) {
         this.$alert("密码不对", {

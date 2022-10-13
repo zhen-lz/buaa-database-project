@@ -27,4 +27,5 @@ urlpatterns = [
     path('register/teacher', views.TeacherRegister),
     path('update/pwd/student', views.update_pwd_student),
     path('update/pwd/teacher', views.update_pwd_teacher),
+    path('app01/', include('app01.urls')),
 ]

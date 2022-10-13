@@ -11,9 +11,46 @@ import pymysql
 # 打开数据库连接
 db = pymysql.connect(host='localhost',
                      user='root',
-                     password='Zcx20020529',
+                     password='2872lizhen',
                      database='mydb')
 cursor = db.cursor()
+
+
+def toLogin(request):
+    return render(request, 'login.html')
+
+
+def toRegister(request):
+    return render(request, 'toRegister.html')
+
+
+def register(request):
+    student_id = request.POST.get("student_id")
+    passwd = request.POST.get("passwd")
+    email = request.POST.get('email')
+    realName = request.POST.get("realName")
+    if student_id and passwd:
+        cursor.execute(
+            "insert into studentinfo(student_id,student_password, student_email, student_realName) values (\'{}\',\'{}\',\'{}\',\'{}\')".format(
+                student_id, passwd, email, realName))
+        return HttpResponse("注册成功,欢迎{}!".format(realName))
+    else:
+        return HttpResponse("学号和密码不得为空，请重新输入!")
+
+
+def login(request):
+    student_id = request.POST.get("student_id")
+    passwd = request.POST.get("passwd")
+    if student_id and passwd:
+        cursor.execute(
+            "select student_id from studentinfo where student_id=\'{}\' and student_password=\'{}\'".format(student_id,
+                                                                                                            passwd))
+        if cursor.fetchone() is None:
+            return HttpResponse("账号密码错误，请输入正确的账号密码！")
+        else:
+            return HttpResponse("登陆成功!欢迎！")
+    else:
+        return HttpResponse("请输入正确的账号密码！")
 
 
 # Create your views here.
@@ -59,8 +96,14 @@ def StudentRegister(request):
 
 @csrf_exempt
 def StudentLogin(request):
+    # print(request.method)
     if request.method == 'POST':
         login_form = StuLoginForm(request.POST)
+
+        # print(login_form)
+        #
+        # print(login_form.cleaned_data.get('student_id'))
+        # print(login_form.cleaned_data.get('student_password'))
 
         if login_form.is_valid():
             student_id = login_form.cleaned_data.get('student_id')
@@ -82,6 +125,9 @@ def StudentLogin(request):
                     'student_id': student_id,
                     'email': row[3],
                 })
+
+        return JsonResponse({'error': 8899, 'msg': '请求方式错误'})
+
     return JsonResponse({'error': 2001, 'msg': '请求方式错误'})
 
 

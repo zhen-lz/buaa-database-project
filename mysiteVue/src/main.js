@@ -8,11 +8,13 @@ import router from './router'
 import axios from 'axios';
 import "./mock/index"
 
+
 Vue.use(ElementUI);
 Vue.prototype.$axios = axios;
 Vue.config.productionTip = false
 
 axios.defaults.withCredentials = false;
+axios.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded';
 
 /* eslint-disable no-new */
 new Vue({
