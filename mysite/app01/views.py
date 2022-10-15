@@ -65,32 +65,44 @@ def user_list(request):
 @csrf_exempt
 def StudentRegister(request):
     if request.method == 'POST':
-        register_form = StuRegisterForm(request.POST)
-        if register_form.is_valid():
-            stu_id = register_form.cleaned_data.get('student_id')
-            password1 = register_form.cleaned_data.get('password1')
-            password2 = register_form.cleaned_data.get('password2')
-            email = register_form.cleaned_data.get('email')
-            realName = register_form.cleaned_data.get('realName')
 
-            # 检测两次密码是否一致
-            if password1 != password2:
-                return JsonResponse({'error': 4004, 'msg': '两次输入的密码不一致'})
-            # 检测密码不符合规范：8-18，英文字母+数字
-            if not re.match('^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,18}$', password1):
-                return JsonResponse({'error': 4003, 'msg': '密码不符合规范'})
+        stu_id = request.POST.get('student_id')
+        password1 = request.POST.get('student_password1')
+        password2 = request.POST.get('student_password2')
+        email = request.POST.get('student_email')
+        realName = request.POST.get('student_realName')
 
-            # 成功
-            # new_student = StudentInfo()
-            # new_student.student_realName = realName
-            # new_student.student_password = password1
-            # new_student.student_email = email
-            # new_student.student_id = stu_id
-            # new_student.save()
-            sql = 'insert into studentinfo(student_id,student_password,student_email,student_realName) values ("stu_id","password1","email","realName")'
-            cursor.execute(sql)
-            db.commit()
-            return JsonResponse({'error': 0, 'msg': '学生注册成功!'})
+        findStuNo = "select * from studentinfo where student_id='{}'".format(stu_id)
+        findEmail = "select * from studentinfo where student_email='{}'".format(email)
+        cursor.execute(findStuNo)
+        student = cursor.fetchall()
+        if len(student) == 1:
+            return JsonResponse({'error': 4006, 'msg': '当前学号已经存在，不能重复注册'})
+        cursor.execute(findEmail)
+        email = cursor.fetchall()
+        if len(email) == 1:
+            return JsonResponse({'error': 4007, 'msg': '当前邮箱已经存在，不能重复注册'})
+
+        # 检测两次密码是否一致
+        if password1 != password2:
+            return JsonResponse({'error': 4004, 'msg': '两次输入的密码不一致'})
+        # 检测密码不符合规范：8-18，英文字母+数字
+        # if not re.match('^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,18}$', password1):
+        #     return JsonResponse({'error': 4003, 'msg': '密码不符合规范'})
+
+        # 成功
+        # new_student = StudentInfo()
+        # new_student.student_realName = realName
+        # new_student.student_password = password1
+        # new_student.student_email = email
+        # new_student.student_id = stu_id
+        # new_student.save()
+        sql = "insert into studentinfo(student_id,student_password,student_email,student_realName) values ('{}','{}','{}','{}')".format(
+            stu_id, password1, email, realName)
+        cursor.execute(sql)
+        db.commit()
+        return JsonResponse({'error': 0, 'msg': '学生注册成功!'})
+
     return JsonResponse({'error': 2001, 'msg': '请求方式错误'})
 
 
@@ -99,36 +111,43 @@ def StudentLogin(request):
     # print(request.method)
     if request.method == 'POST':
         login_form = StuLoginForm(request.POST)
-
-        # print(login_form)
-        #
+        print(request.POST)
+        print(login_form)
         # print(login_form.cleaned_data.get('student_id'))
         # print(login_form.cleaned_data.get('student_password'))
 
         if login_form.is_valid():
             student_id = login_form.cleaned_data.get('student_id')
             student_password = login_form.cleaned_data.get('student_password')
+
             # try:
             #      user = StudentInfo.object.get(student_id=student_id)
             # except:
             #     return JsonResponse({'error': 4002, 'msg': '学号不存在'})
             sql = "select * from studentinfo where student_id='{}'".format(student_id)
             cnt = cursor.execute(sql)
+
             if cnt == 0:
-                return JsonResponse({'error': 4002, 'msg': '学号不存在'})
+                return JsonResponse({'code': 4002, 'msg': '学号不存在'})
             else:
                 row = cursor.fetchone()
-                return JsonResponse({
-                    'error': 0,
-                    'msg': "登录成功",
-                    'student_realName': row[4],
-                    'student_id': student_id,
-                    'email': row[3],
-                })
+                print(row)
+                if row[1] != student_password:
+                    return JsonResponse({
+                        'code': 4004,
+                        'msg': "密码错误",
+                    })
+                else:
+                    return JsonResponse({
+                        'code': 0,
+                        'msg': "登录成功",
+                        'student_realName': row[3],
+                        'email': row[2],
+                    })
 
-        return JsonResponse({'error': 8899, 'msg': '请求方式错误'})
+        return JsonResponse({'code': 8899, 'msg': '格式不对'})
 
-    return JsonResponse({'error': 2001, 'msg': '请求方式错误'})
+    return JsonResponse({'code': 2001, 'msg': '请求方式错误'})
 
 
 @csrf_exempt
