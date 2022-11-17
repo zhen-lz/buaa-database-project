@@ -2,12 +2,12 @@
   <div id="background">
     <!--  <img src="../assets/loginimg.png"/>-->
 
-    <div class="auth-form" style="margin-top: 14%">
+    <div class="auth-form" style="margin-top: 10%">
       <h1 style="margin-bottom: 20px;text-align: center;font-size: 45px">Bridge课程系统</h1>
       <div class="auth-form-body">
         <el-form ref="form" label-width="80">
-          <label>用户名</label>
-          <el-input class="input-info" v-model="username" placeholder="请输入用户名"
+          <label>学号</label>
+          <el-input class="input-info" v-model="username" placeholder="请输入学号"
                     prefix-icon="el-icon-user"></el-input>
           <div style="padding: 16px 0;position: relative">
             <label>密码</label>
@@ -32,32 +32,36 @@
     </div>
 
     <el-dialog
-      title="注册"
+      title="欢迎注册"
       center
       :visible.sync="dialogVisible"
-      width="35%"
+      width="38%"
       :before-close="handleClose"
       append-to-body>
-      <el-form ref="form" :model="registerForm" label-width="20%">
-        <el-form-item label="学号">
-          <el-input v-model="registerForm.student_id"></el-input>
+      <el-form :model="registerForm" label-width="auto" ref="registerForm">
+        <el-form-item label='学号' prop="stu_id">
+          <label slot="label">学&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号</label>
+          <el-input v-model="registerForm.stu_id"></el-input>
         </el-form-item>
-        <el-form-item label="姓名">
-          <el-input v-model="registerForm.student_realName"></el-input>
+        <el-form-item label="姓名" prop="stu_realName">
+          <label slot="label">姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名</label>
+          <el-input v-model="registerForm.stu_realName"></el-input>
         </el-form-item>
-        <el-form-item label="邮箱">
-          <el-input v-model="registerForm.student_email"></el-input>
+        <el-form-item label="邮箱" prop="email">
+          <label slot="label">邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱</label>
+          <el-input v-model="registerForm.email"></el-input>
         </el-form-item>
-        <el-form-item label="密码">
-          <el-input v-model="registerForm.student_password1"></el-input>
+        <el-form-item label="密码" prop="stu_password1">
+          <label slot="label">密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码</label>
+          <el-input v-model="registerForm.stu_password1"></el-input>
         </el-form-item>
-        <el-form-item label="请再次输入密码">
-          <el-input v-model="registerForm.student_password2"></el-input>
+        <el-form-item label="请再次输入密码" prop="stu_password2">
+          <el-input v-model="registerForm.stu_password2"></el-input>
         </el-form-item>
       </el-form>
 
       <span slot="footer" class="dialog-footer">
-    <el-button @click="dialogVisible = false">取消</el-button>
+    <el-button @click="handleRegisterCancel">取消</el-button>
     <el-button type="primary" @click="handleRegister">确定</el-button>
   </span>
     </el-dialog>
@@ -75,12 +79,11 @@ export default {
       password: "",
 
       registerForm: {
-        student_id: '',
-        student_password1: '',
-        student_password2: '',
-        student_realName: '',
-        student_email: '',
-        student_info:[12,21,21,21]
+        stu_id: '',
+        stu_password1: '',
+        stu_password2: '',
+        stu_realName: '',
+        email: '',
       },
 
       dialogVisible: false,
@@ -91,49 +94,54 @@ export default {
   methods: {
     handleLogin() {
       if (this.check(this.username) && this.check(this.password)) {
-        this.$axios.post("http://127.0.0.1:8000/app01/student/login", {
-            "student_id": this.username,
-            "student_password": this.password
-          }
+        let data = {"stu_id": this.username, "stu_password": this.password};
+
+        this.$axios.post("http://127.0.0.1:8000/stu/login/", JSON.stringify(data)
         ).then(response => {
-          console.log(response.data)
+            console.log(response.data)
 
-          let code = response.data.code
+            let code = response.data.code
 
-          if (code === 0) {
-            this.$message({
+            if (code === 200) {
+              this.$message({
                 message: "登录成功！",
                 type: "success"
-              }
-            );
+              });
 
-            setTimeout(() => {
-              this.$router.push("/main");
-            }, 1000);
+              sessionStorage.clear();
+              sessionStorage.username = this.username;
+              sessionStorage.password = this.password;
 
-          } else if (code === 4002) {
-            this.$alert("用户不存在", {
-              type: "error",
-              confirmButtonText: "确定",
-              callback: action => {
-                this.password = "";
-                this.username = "";
-              }
-            })
-          } else if (code === 4004) {
-            this.$alert("密码不对", {
-              type: "error",
-              confirmButtonText: "确定",
-              callback: action => {
-                this.password = "";
-              }
-            })
+              setTimeout(() => {
+                this.$router.push("/studentmain");
+              }, 1000);
+
+            } else {
+              this.$alert(response.data.prompt, {
+                type: "error",
+                confirmButtonText: "确定",
+                callback: action => {
+                  this.password = "";
+                  this.username = "";
+                }
+              })
+            }
           }
-        }).catch(error => {
+        ).catch(error => {
           console.log(error)
         })
       } else {
-        this.$message({message: '请输入字符', type: 'warning'})
+        let str = "请输入";
+        if (!this.check(this.username)) {
+          str = str + '用户名';
+        }
+        if (!this.check(this.username) && !this.check(this.password)) {
+          str = str + '、';
+        }
+        if (!this.check(this.password)) {
+          str = str + '密码';
+        }
+        this.$message({message: str, type: 'warning'})
       }
     },
 
@@ -146,29 +154,14 @@ export default {
     },
 
     handleRegister() {
-      if (this.check(this.registerForm.id) && this.check(this.registerForm.name)
-        && this.check(this.registerForm.email) && this.check(this.registerForm.password)
-        && this.check(this.registerForm.re_password)) {
+      if (this.check(this.registerForm.stu_id) && this.check(this.registerForm.stu_realName)
+        && this.check(this.registerForm.email) && this.check(this.registerForm.stu_password1)
+        && this.check(this.registerForm.stu_password2)) {
 
-        let x =JSON.stringify({
-          'as': {
-            "12": [12, 21],
-            "sa": "sa"
-          },
-          asa:["wq",'qwqw','wq'],
-          sas:{
-            'wqw':'wqw',
-            'qw':'wqw',
-            'qwq':'qqe'
-          }
-        })
-
-        this.$axios.post('http://127.0.0.1:8880/app01/student/register', x).then(response => {
+        this.$axios.post('http://127.0.0.1:8000/stu/register/', JSON.stringify(this.registerForm)).then(response => {
             console.log(response.data);
 
-            if (response.data.error === 0) {
-
-
+            if (response.data.code === 200) {
 
               this.$message({
                   message: "注册成功！",
@@ -177,10 +170,11 @@ export default {
               );
 
               this.dialogVisible = false;
-            } else {
 
+              this.$refs["registerForm"].resetFields();
+            } else {
               this.$message({
-                  message: "注册失败！",
+                  message: "注册失败！" + response.data.error,
                   type: 'warning'
                 }
               );
@@ -191,7 +185,7 @@ export default {
           }
         )
       } else {
-        this.$message({message: '请输入字符', type: 'warning'})
+        this.$message({message: '请输入完整内容！', type: 'warning'})
       }
     },
 
@@ -202,6 +196,10 @@ export default {
         })
         .catch(_ => {
         });
+    },
+    handleRegisterCancel() {
+      this.dialogVisible = false;
+      this.$refs['registerForm'].resetFields();
     }
   }
 
