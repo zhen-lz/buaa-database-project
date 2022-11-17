@@ -1,3 +1,4 @@
+import json
 import re
 
 from django.http import JsonResponse
@@ -65,6 +66,11 @@ def user_list(request):
 @csrf_exempt
 def StudentRegister(request):
     if request.method == 'POST':
+        print(request.POST)
+        # print(json.decoder(request.POST))
+        # print(json.loads(request.body))
+        print(json.dumps(request.POST))
+        # return json.dumps({'dd':'qw','as':'sas'}))
 
         stu_id = request.POST.get('student_id')
         password1 = request.POST.get('student_password1')

@@ -125,7 +125,7 @@ export default {
 
     return {
       tableData: [],
-      addFrom: [{
+      addFrom: {
         course_id: '',
         course_name: '',
         course_department: '',
@@ -136,7 +136,19 @@ export default {
         course_count: '',
         course_time: '',
         course_total: '',
-      }],
+        class: function () {
+          this.course_id = '';
+            this.course_name = '';
+            this.course_department = '';
+            this.course_teacher_id = '' ;
+            this.course_teacher_name = '';
+            this.course_info = '';
+            this.course__pc = '';
+            this.course_count = '';
+            this.course_time = '';
+            this.course_total = '';
+        }
+      },
       editFrom: [{
         course_id: '',
         course_name: '',
@@ -171,7 +183,7 @@ export default {
       console.log(index, row);
 
       this.dialogVisibleEdit = true;
-      this.editFrom={...row}
+      this.editFrom = {...row}
       this.editInfo = new Array({'index': index, 'row': row})
       console.log(this.editInfo)
     }

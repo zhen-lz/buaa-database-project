@@ -5,6 +5,7 @@ import HelloWorld from "../components/HelloWorld";
 import demo from "../components/demo";
 import Login from "../components/Login";
 import Main from "../components/Main";
+import StudentMain from "../components/StudentMain";
 
 Vue.use(Router)
 
@@ -17,18 +18,24 @@ export default new Router({
     },
     {
       path: '/login',
-      name: 'Login',
       component: Login
     },
     {
       path: '/main',
-      name: 'Main',
       component: Main
     },
     {
       path: '/hello-world',
-      name: 'HelloWorld',
       component: HelloWorld
     },
-  ]
+    {
+      path:'/stumain',
+      component:StudentMain
+    },
+    {
+      path:'/loginres',
+      component:LoginRegister
+    }
+  ],
+  mode:'history'
 })

@@ -80,6 +80,7 @@ export default {
         student_password2: '',
         student_realName: '',
         student_email: '',
+        student_info:[12,21,21,21]
       },
 
       dialogVisible: false,
@@ -90,7 +91,7 @@ export default {
   methods: {
     handleLogin() {
       if (this.check(this.username) && this.check(this.password)) {
-        this.$axios.post("http://127.0.0.1:8880/app01/student/login", {
+        this.$axios.post("http://127.0.0.1:8000/app01/student/login", {
             "student_id": this.username,
             "student_password": this.password
           }
@@ -149,10 +150,25 @@ export default {
         && this.check(this.registerForm.email) && this.check(this.registerForm.password)
         && this.check(this.registerForm.re_password)) {
 
-        this.$axios.post('http://127.0.0.1:8880/app01/student/register', this.registerForm).then(response => {
+        let x =JSON.stringify({
+          'as': {
+            "12": [12, 21],
+            "sa": "sa"
+          },
+          asa:["wq",'qwqw','wq'],
+          sas:{
+            'wqw':'wqw',
+            'qw':'wqw',
+            'qwq':'qqe'
+          }
+        })
+
+        this.$axios.post('http://127.0.0.1:8880/app01/student/register', x).then(response => {
             console.log(response.data);
 
             if (response.data.error === 0) {
+
+
 
               this.$message({
                   message: "注册成功！",
