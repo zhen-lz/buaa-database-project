@@ -10,6 +10,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "animate.css": "^4.1.1",
     "axios": "^1.1.2",
     "element-react": "^1.4.34",
     "element-theme-default": "^1.4.13",

@@ -52,7 +52,7 @@
 
             <el-table-column
               label="课程信息"
-              prop="course_info">
+              prop="course_intro">
             </el-table-column>
 
             <!--            <el-table-column-->
@@ -194,11 +194,11 @@ export default {
       this.info = this.info_backup;
     },
     deleteClass(index, row) {
-      let data = {username: this.username, course: row}
-      this.$axios.post('/stu/rmcourse', JSON.stringify(data)).then(response => {
+      let data = {'username': this.username, 'course': row}
+      this.$axios.post('http://127.0.0.1:8000/stu/rmcourse/', JSON.stringify(data)).then(response => {
         console.log(response.data);
 
-        if (response.data.code === 210) {
+        if (response.data.code === 0) {
           this.classSelect.splice(index, 1);
           this.$msgbox({
             message: '退课成功',
