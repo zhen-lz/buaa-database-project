@@ -277,7 +277,7 @@ export default {
 </script>
 
 <style>
-/* @import '../assets/css/Login.css' */
+/* @import '../images/css/Login.css' */
 .base{
   height: 100vh;
   display: flex;

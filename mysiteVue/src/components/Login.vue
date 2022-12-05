@@ -1,6 +1,6 @@
 <template>
   <div id="background">
-    <!--  <img src="../assets/loginimg.png"/>-->
+    <!--  <img src="../images/loginimg.png"/>-->
 
     <div class="auth-form" style="margin-top: 10%">
       <h1 style="margin-bottom: 20px;text-align: center;font-size: 45px">Bridge课程系统</h1>

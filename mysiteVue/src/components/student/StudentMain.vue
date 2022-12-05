@@ -2,17 +2,17 @@
   <el-container>
     <el-header>
       <el-menu :default-active="menuActivateIndex" mode="horizontal" @select="handleMenuSelect" router>
-        <!--        <img src="src/assets/school.png">-->
+        <!--        <img src="src/images/school.png">-->
         <el-menu-item index="1" route="/"><span @click="logout">退出登录</span></el-menu-item>
         <el-menu-item index="2">个人主页</el-menu-item>
         <!--        <el-menu-item index="3">已选课程</el-menu-item>-->
-        <el-menu-item index="4" route="/main">讨论区</el-menu-item>
+        <el-menu-item index="4" route="/forum">讨论区</el-menu-item>
         <el-menu-item index="5" route="/classground">课程广场</el-menu-item>
       </el-menu>
     </el-header>
 
     <el-main>
-      <!--      <img src="@/assets/school.png">-->
+      <!--      <img src="@/images/school.png">-->
       <div style="text-align: center">
         <img src="@/assets/dog.jpg" style="border-radius: 50%;width: 100px;height: 100px">
       </div>
@@ -109,7 +109,7 @@
 </template>/
 
 <script>
-import router from "../router";
+import router from "../../router";
 
 export default {
   name: "StudentMain",
