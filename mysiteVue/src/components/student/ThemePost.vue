@@ -55,7 +55,7 @@
 </template>
 
 <script>
-// import * as Quill from 'quill'
+import * as Quill from 'quill'
 // 这里引入修改过的video模块并注册
 export default {
   name: "themepost",
@@ -72,6 +72,8 @@ export default {
   },
 
   created() {
+    this.username=sessionStorage.username;
+
     this.$axios.get("/data").then((response) => {
 
       console.log(response.data);
@@ -87,7 +89,7 @@ export default {
   },
   methods: {
     delete1(){
-      this.$axios.get("http://127.0.0.1:8000/stu/newthemepost/",{
+      this.$axios.post("http://127.0.0.1:8000/stu/newthemepost/",{
         tp_id:"",
         tp_title:this.title,
         tp_content:this.content
@@ -104,11 +106,12 @@ export default {
 
     },
     edit(){
-      this.$axios.get("http://127.0.0.1:8000/stu/newthemepost/",{
-        tp_id:"",
-        tp_title:this.title,
-        tp_content:this.content
-      }).then((response) => {
+      let data= {"tp_title":this.title, "tp_content":this.content};
+      data={
+        "stu_id": this.username,
+        "themepost":data
+      };
+      this.$axios.post("http://127.0.0.1:8000/stu/newthemepost/",JSON.stringify(data)).then((response) => {
         this.dialogVisible=false
       });
     },

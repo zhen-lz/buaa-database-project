@@ -35,9 +35,9 @@
                       <h3>{{ item.course_id }}</h3>
                       <span @click="mainedit">进入帖子</span>
                     </div>
-                    {{ item.course_name }}
-                    {{ item.course_info }}
-                    {{ item.course_capacity }}
+                    {{ item.tp_title }}
+                    {{ item.tp_content }}
+                    {{ item.tp_time }}
                   </div>
                 </el-card>
               </div>
@@ -102,18 +102,22 @@ export default {
   },
 
   created() {
-    this.$axios.get("/data").then((response) => {
-
-      console.log(response.data);
-      this.tableData = response.data.data;
-
-      // var data = response.data.data;
-      //
-      // for (var i = 0; i < 6; i++) {
-      //   this.tableData.push(data[i])
-      //   console.log(data[i])
-      // }
-    });
+    this.$axios.post('http://127.0.0.1:8000/showalltp/',JSON.stringify({stu_id:sessionStorage.username})).then(res=>{
+      this.tableData=res.data.data
+    })
+    //
+    // this.$axios.get("/data").then((response) => {
+    //
+    //   console.log(response.data);
+    //   this.tableData = response.data.data;
+    //
+    //   // var data = response.data.data;
+    //   //
+    //   // for (var i = 0; i < 6; i++) {
+    //   //   this.tableData.push(data[i])
+    //   //   console.log(data[i])
+    //   // }
+    // });
   },
   methods: {
     mainedit(){
@@ -125,14 +129,16 @@ export default {
       }).then((response) => {
         this.tableData = response.data.data;
       });
-
     },
+
     edit(){
-      this.$axios.get("http://127.0.0.1:8000/stu/newthemepost/",{
-        tp_id:"",
-        tp_title:this.title,
-        tp_content:this.content
-      }).then((response) => {
+      this.$axios.post("http://127.0.0.1:8000/stu/newthemepost/",JSON.stringify({
+        stu_id:sessionStorage.username,
+        themepost: {
+          tp_title: this.title,
+          tp_content: this.content
+        }
+      })).then((response) => {
         this.dialogVisible=false
       });
     },
