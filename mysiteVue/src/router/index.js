@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import LoginRegister from "../components/LoginRegister";
+import LoginRegister from "../components/student/LoginRegister";
 import HelloWorld from "../components/student/HelloWorld";
 import Login from "../components/Login";
 import Main from "../components/Main";
@@ -15,20 +15,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Login',
-      component: Login
-    },
-    {
-      path: '/login',
-      component: Login
-    },
-    {
-      path: '/main',
-      component: Main
-    },
-    {
-      path: '/hello-world',
-      component: HelloWorld
+      component: LoginRegister
     },
     {
       path: '/studentmain',
@@ -49,7 +36,22 @@ export default new Router({
     {
       path: '/forum',
       component: Forum
-    }
+    },
+
+
+    {
+      path: '/login',
+      component: Login
+    },
+    {
+      path: '/main',
+      component: Main
+    },
+    {
+      path: '/hello-world',
+      component: HelloWorld
+    },
+
 
   ],
   mode: 'history'

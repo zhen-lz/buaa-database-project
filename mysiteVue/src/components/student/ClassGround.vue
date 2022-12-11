@@ -146,7 +146,7 @@
                 <template slot-scope="scope">
                   <div slot="reference"
                        style="width: 80px;font-size: large;color: #409EFF;font-weight: bold;text-align: center">
-                    <span>{{ scope.row.comment_id }}</span>
+                    <span>{{ scope.row.stu_name }}</span>
                   </div>
                   <div style="color: lightslategray">
                     <i class="el-icon-time"></i>
@@ -373,19 +373,12 @@ export default {
       return "佚民"
     },
     classGetCommentsData(id) {
-      let data = [];
+      let comment = this.classIntroDataList.filter(i => i.id === id).at(0).data;
       this.$axios.post("http://127.0.0.1:8000/showcoursecomment/", JSON.stringify({"course_id": id})).then(response => {
         console.log(response)
-        data = response.data.data
+        comment.classCommentsData = response.data.data
       }).catch(response => {
         console.log(response)
-        this.classCommentsData = []
-      })
-
-      this.classIntroDataList.forEach((item, index) => {
-        if (item.id === id) {
-          item.data.classCommentsData = data;
-        }
       })
     }
 
@@ -395,6 +388,9 @@ export default {
 </script>
 
 <style scoped>
+.el-menu-item {
+  float: right;
+}
 
 .el-card__body {
   height: 50px;
