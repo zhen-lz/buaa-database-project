@@ -17,6 +17,7 @@
 
     <el-main>
       <el-tabs v-model="tabsValue" type="card" @tab-remove="removeTab">
+
         <el-tab-pane
           :key="mainTab.name"
           :label="mainTab.title"
@@ -58,7 +59,7 @@
                              @click="handleSelectClass(item,index)">选课
                   </el-button>
                   <el-button type="info"
-                             disabled="true"
+                             :disabled="true"
                              style="margin: 0 0"
                              v-show="ifSelected(item,index)">已选
                   </el-button>
@@ -101,8 +102,11 @@
             </div>
           </el-card>
 
-          <el-card v-show="ifSelected(item.content.data,item.content.index) && !commentSubmit" shadow="never"
-                   style="margin: 20px 12%">
+          <el-card
+            v-show="ifSelected(item.content.data,item.content.index)
+            && !classIntroDataList.filter(i => i.id === item.content.data.course_id).at(0).data.ifSubmit"
+            shadow="never"
+            style="margin: 20px 12%">
             <div slot="header">
               <el-tooltip effect="light" content="给你喜欢的课程投上一票吧！" placement="right-start">
                 <span style="font-weight: bold;font-size: large">课程评价</span>
@@ -111,9 +115,10 @@
 
             <div style="display: flex">
               您觉得该课程：
-              <el-rate v-model="classRate"
-                       :colors=" ['#99A9BF', '#F7BA2A', '#FF9900']"
-                       show-text
+              <el-rate
+                v-model="classIntroDataList.filter(i => i.id === item.content.data.course_id).at(0).data.classRate"
+                :colors=" ['#99A9BF', '#F7BA2A', '#FF9900']"
+                show-text
               ></el-rate>
             </div>
             <div>
@@ -121,27 +126,38 @@
               <el-input type="textarea"
                         clearable placeholder="请输入您的意见或看法"
                         :autosize="{minRows:3}"
-                        v-model="classComment"></el-input>
+                        v-model="classIntroDataList.filter(i => i.id === item.content.data.course_id).at(0).data.classComment"></el-input>
             </div>
             <el-button type="primary"
-                       @click="classCommentSubmit"
+                       @click="classCommentSubmit(item.content.data,item.content.index)"
                        style="margin: 15px 46%">提交
             </el-button>
           </el-card>
 
           <div style="margin: 10px 12%;">
             <el-table empty-text="该课程还没有评价"
-                      :data="classGetComments(item.content.data.course_id)">
-              <el-table-column>
+                      :data="classIntroDataList.filter(i => i.id === item.content.data.course_id).at(0).data.classCommentsData">
+              <el-table-column width="100">
                 <img src="../../../static/images/BUAALogo.jpg" style="width: 50px;height: 50px;border-radius: 50%">
               </el-table-column>
 
               <el-table-column
-                prop="id">
+                width="160">
+                <template slot-scope="scope">
+                  <div slot="reference"
+                       style="width: 80px;font-size: large;color: #409EFF;font-weight: bold;text-align: center">
+                    <span>{{ scope.row.comment_id }}</span>
+                  </div>
+                  <div style="color: lightslategray">
+                    <i class="el-icon-time"></i>
+                    <span style="margin-left: 5px">{{ scope.row.comment_time }}</span>
+                  </div>
+
+                </template>
               </el-table-column>
 
               <el-table-column
-                prop="data">
+                prop="comment_content">
               </el-table-column>
             </el-table>
           </div>
@@ -183,10 +199,14 @@ export default {
       classSelectedId: [],
 
       //  comments
-      commentSubmit: false,
-      classRate: 0,
-      classComment: '',
-      classComments: []
+      classIntroDataList: [],
+      // commentSubmitList: [],
+      // classRateList: {},
+      // classCommentList: {},
+      // classCommentsDataList: {},
+      // classCommentsData: [],
+      //
+      // test: [{id: 123, data: {rate: 2, comment: 123}}]
     }
   },
   methods: {
@@ -201,7 +221,11 @@ export default {
     getData() {
       this.$axios.get('http://127.0.0.1:8000/show/').then(response => {
         if (response.data.code === 0) {
-          this.classAll = response.data.data
+          let data = response.data.data
+          data.forEach((item, index) => {
+            item.course_rate = Number(item.course_rate)
+          })
+          this.classAll = data;
           // this.$message(response.data.message)
         } else if (response.data.code === 1) {
           this.$message.error(response.data.message)
@@ -251,9 +275,11 @@ export default {
     removeTab(targetName) {
       let tabs = this.tabs;
       let activeName = this.tabsValue;
+      let id = '';
       if (activeName === targetName) {
         tabs.forEach((tab, index) => {
           if (tab.name === targetName) {
+            id = tab.content.data.course_id;
             let nextTab = tabs[index + 1] || tabs[index - 1];
             if (nextTab) {
               activeName = nextTab.name;
@@ -266,15 +292,35 @@ export default {
 
       this.tabsValue = activeName;
       this.tabs = tabs.filter(tab => tab.name !== targetName);
+
+      this.classIntroDataList = this.classIntroDataList.filter(item => item.id !== id)
     },
     classIntroClick(item, index) {
-      let newTabName = ++this.tabIndex + '';
-      this.tabs.push({
-        title: item.course_name,
-        name: newTabName,
-        content: {index: index, data: item}
-      });
-      this.tabsValue = newTabName;
+      let ifExist = false;
+      let tabName = '';
+      this.tabs.forEach(i => {
+        if (i.content.data.course_id === item.course_id) {
+          ifExist = true;
+          tabName = i.name;
+        }
+      })
+
+      if (ifExist) {
+        this.tabsValue = tabName;
+      } else {
+        let newTabName = ++this.tabIndex + '';
+        this.tabs.push({
+          title: item.course_name,
+          name: newTabName,
+          content: {index: index, data: item}
+        });
+        this.tabsValue = newTabName;
+
+        let data = {classRate: 0, classComment: '', classCommentsData: [], ifSubmit: false}
+        this.classIntroDataList.push({"id": item.course_id, "data": data})
+
+        this.classGetCommentsData(item.course_id);
+      }
     },
     ifSelected(item, index) {
       return this.classSelectedId.includes(item.course_id)
@@ -286,52 +332,69 @@ export default {
       data = data.filter(d => d.course_name.includes(words))
       this.classAll = data;
       this.searchClassDeleteShow = true
+
+
     },
     searchClassDelete() {
       this.searchClassKeyword = '';
       this.searchClassDeleteShow = false;
       this.getData();
     },
-    classCommentSubmit() {
-      // TODO 传输消息 rate comment
+    classCommentSubmit(item, index) {
+      let comment = this.classIntroDataList.filter(i => i.id === item.course_id).at(0).data;
+      // console.log(comment)
 
-      // if success
-      this.$alert("我们收到了您的评价，也祝愿您在北航的学习生活越来越顺利，实现自己的人生价值！", "Success", {
-          confirmButtonText: "Yes",
-          type: 'success',
-          center: true,
-          callback: action => {
-            this.commentSubmit = true;
+      this.$axios.post("http://127.0.0.1:8000/stu/comment/", JSON.stringify({
+        "stu_id": this.username,
+        "course_id": item.course_id,
+        "comment_content": comment.classComment
+      })).then(response => {
+        console.log(response)
+
+        comment.ifSubmit = true;
+        // if success
+        this.$alert("我们收到了您的评价，也祝愿您在北航的学习生活越来越顺利，实现自己的人生价值！", "Success", {
+            confirmButtonText: "Yes",
+            type: 'success',
+            center: true,
+            callback: action => {
+            }
           }
+        )
+
+        this.classGetCommentsData(item.course_id)
+      }).catch(response => {
+          console.log(response)
+          this.$message({message: "系统故障，评价失败", type: "error"})
         }
       )
+    },
+    classToTeacher() {
+      return "佚民"
+    },
+    classGetCommentsData(id) {
+      let data = [];
+      this.$axios.post("http://127.0.0.1:8000/showcoursecomment/", JSON.stringify({"course_id": id})).then(response => {
+        console.log(response)
+        data = response.data.data
+      }).catch(response => {
+        console.log(response)
+        this.classCommentsData = []
+      })
 
-    },
-    classToTeacher(id) {
-      return "sas"
-    },
-    classGetComments(id) {
-      this.$axios.get
-      return [{id: 'sdwdwdw', data: "dwdwdwdw"}]
+      this.classIntroDataList.forEach((item, index) => {
+        if (item.id === id) {
+          item.data.classCommentsData = data;
+        }
+      })
     }
+
 
   }
 }
 </script>
 
 <style scoped>
-.el-menu-item {
-  float: right;
-}
-
-.mian {
-  display: flex;
-  margin: 0 10%;
-}
-
-.mian1 {
-  margin: 20px 12%;
-}
 
 .el-card__body {
   height: 50px;

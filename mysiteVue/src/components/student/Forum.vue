@@ -85,7 +85,7 @@
 </template>
 
 <script>
-// import * as Quill from 'quill'
+import * as Quill from 'quill'
 // 这里引入修改过的video模块并注册
 export default {
   name: "forum",
