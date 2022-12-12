@@ -18,12 +18,11 @@
       </el-menu>
     </el-header>
 
-    <el-main>
-      <div>
+
         <div class="mian">
           <div class="mian2">
             <div>
-              <el-input v-model="input" placeholder="请输入内容"></el-input>
+              <el-input v-model="input" @clear="getshowalltp" clearable placeholder="请输入内容"></el-input>
               <div
                 v-for="(item, index) in tableData"
                 :key="index"
@@ -31,18 +30,17 @@
               >
                 <el-card class="box-card"  route="/edit">
                   <div class="text item">
-                    <div class="main21">
-                      <h3>{{ item.course_id }}</h3>
-                      <span @click="mainedit">进入帖子</span>
+                   <div class="main21">
+                    <h3>{{ item.tp_title }}</h3>
+                    <span @click="mainedit(item)">进入帖子</span>
                     </div>
-                    {{ item.tp_title }}
                     {{ item.tp_content }}
                     {{ item.tp_time }}
                   </div>
                 </el-card>
               </div>
             </div>
-            <el-button @click="sou" style="height: 40px" type="primary" round
+            <el-button @click="sou" style="height: 40px;margin-left:15px" type="primary" round
             >搜索</el-button
             >
           </div>
@@ -52,9 +50,9 @@
               <div class="titleimg">
                 <img src="../../assets/logon.jpeg" alt="" />
                 <div>
-                  <p>用户名:154</p>
-                  <p>学号:154</p>
-                  <p>已发帖子:4</p>
+                  <p>用户名:{{getinfolist.stu_name}}</p>
+                  <p>学号:{{getinfolist.stu_id}}</p>
+                  <p>已发帖子:{{getinfolist.postCnt}}</p>
                 </div>
               </div>
               <el-button style="width: 360px" @click="addtitle" type="primary"
@@ -63,8 +61,6 @@
             </el-card>
           </div>
         </div>
-      </div>
-    </el-main>
     <el-dialog
       title="新增主题贴"
       :visible.sync="dialogVisible"
@@ -92,19 +88,20 @@ export default {
 
   data() {
     return {
+      username:"",
       tableData: [],
       menuActivateIndex: "4",
       input: "",
       title:"",
       dialogVisible:false,
-      content:""
+      content:"",
+      getinfolist:[]
     };
   },
 
   created() {
-    this.$axios.post('http://127.0.0.1:8000/showalltp/',JSON.stringify({stu_id:sessionStorage.username})).then(res=>{
-      this.tableData=res.data.data
-    })
+    this.username = sessionStorage.username;
+
     //
     // this.$axios.get("/data").then((response) => {
     //
@@ -118,15 +115,31 @@ export default {
     //   //   console.log(data[i])
     //   // }
     // });
+    this.getshowalltp()
+    this.getinfo()
   },
   methods: {
-    mainedit(){
-      this.$router.push({path:'/themepost'})
+    getshowalltp(){
+      this.$axios.post('http://127.0.0.1:8000/showalltp/',JSON.stringify({stu_id:sessionStorage.username})).then(res=>{
+      this.tableData=res.data.data
+      console.log(this.tableData)
+    })
+    },
+    getinfo(){
+       this.$axios.post("http://127.0.0.1:8000/stu/getinfo/",
+        JSON.stringify({"stu_id": this.username})).then((response) => {
+      this.getinfolist = response.data;
+
+      });
+    },
+    mainedit(item){
+      this.$router.push({path:'/themepost',query:item})
     },
     sou(){
-      this.$axios.get("http://127.0.0.1:8000/searchtp/",{
+      this.$axios.post("http://127.0.0.1:8000/searchtp/",
+        JSON.stringify({
         tp_title:this.input,
-      }).then((response) => {
+      })).then((response) => {
         this.tableData = response.data.data;
       });
     },
@@ -140,6 +153,7 @@ export default {
         }
       })).then((response) => {
         this.dialogVisible=false
+        this.getshowalltp()
       });
     },
     handleMenuSelect(key, keyPath) {
@@ -243,14 +257,14 @@ export default {
 }
 .mian {
   display: flex;
-  margin: 0 10%;
+  justify-content: center;
 }
 .mian2 {
+  margin-top: 10px;
   display: flex;
-  width: 45%;
 }
 .mian1 {
-  margin: 20px 12%;
+  margin: 20px 0;
 }
 .el-card__body {
   height: 50px;
@@ -259,8 +273,8 @@ export default {
   display: flex;
 } */
 .box-card1 {
-  margin-left: 100px;
-  width: 400px;
+  margin-top: 10px;
+  margin-left: 200px;
 }
 .titleimg {
   display: flex;

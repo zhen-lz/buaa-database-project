@@ -10,8 +10,12 @@
             <div>
               <el-divider>楼主</el-divider>
               <div class="item">
-                <h3>12321</h3>
-                <el-button style="height: 40px" type="primary" size="small">跟帖</el-button>
+                <h3>{{ toplist.tp_title }}</h3>
+                <h3>{{ toplist.tp_content }}</h3>
+                <div>
+                    <el-button style="height: 40px" @click="addtitle" type="primary" size="small">跟帖</el-button>
+                    <el-button style="height: 40px" type="primary" @click="fan" size="small">返回</el-button>
+                    </div>
               </div>
               <el-divider >跟帖</el-divider>
               <div
@@ -21,11 +25,13 @@
               >
                 <el-card class="box-card" >
                   <div class="item">
-                    <img sty src="../../assets/logon.jpeg" alt="" />
-                    <h3>{{ item1.course_id }}</h3>
-                    <el-button style="height: 40px" @click="delete1" type="danger" size="small">删除</el-button>
+                    <h3>{{ item1.fp_content }}</h3>
+                    <h3>{{ item1.stu_name }}</h3>
+
+                    <el-button style="height: 40px" @click="delete1(item1)" type="danger" size="small">删除</el-button>
                   </div>
                 </el-card>
+
 
               </div>
             </div>
@@ -36,12 +42,11 @@
       </div>
     </el-main>
     <el-dialog
-      title="新增主题贴"
+      title="跟帖"
       :visible.sync="dialogVisible"
       width="80%"
       :before-close="handleClose"
     >
-      <el-input style="margin-bottom:20px" v-model="title" placeholder="请输入标题"></el-input>
       <quill-editor  class="editor"  v-model="content" ref="customQuillEditor"  >
       </quill-editor>
       <span slot="footer" class="dialog-footer">
@@ -67,34 +72,49 @@ export default {
       input: "",
       title:"",
       dialogVisible:false,
-      content:""
+      content:"",
+      tp_id:"",
+      username:"",
+      toplist:[]
     };
   },
 
   created() {
     this.username=sessionStorage.username;
 
-    this.$axios.get("/data").then((response) => {
-
-      console.log(response.data);
-      this.tableData = response.data.data;
-
-      // var data = response.data.data;
-      //
-      // for (var i = 0; i < 6; i++) {
-      //   this.tableData.push(data[i])
-      //   console.log(data[i])
-      // }
-    });
   },
+  watch:{
+      $route: {
+      handler: function(val, oldVal) {
+        console.log(val, oldVal)
+         this.tp_id = this.$route.query.tp_id
+        this.toplist = this.$route.query
+        console.log(this.toplist)
+        this.getshowAllFp()
+      },
+      immediate: true,
+       deep:true
+    }
+  },
+
   methods: {
-    delete1(){
-      this.$axios.post("http://127.0.0.1:8000/stu/newthemepost/",{
-        tp_id:"",
-        tp_title:this.title,
-        tp_content:this.content
-      }).then((response) => {
-        this.dialogVisible=false
+
+    getshowAllFp(){
+      this.$axios.post('http://127.0.0.1:8000/showallfp/',JSON.stringify({tp_id:this.tp_id})).then(res=>{
+      this.tableData=res.data.data
+      console.log(this.tableData)
+    })
+    },
+    fan(){
+      this.$router.push("/forum");
+    },
+    delete1(item1){
+      this.$axios.post("http://127.0.0.1:8000/stu/deletefollowpost/",JSON.stringify({
+        tp_id:this.tp_id,
+        stu_id:this.username,
+        fp_id:item1.fp_id
+      })).then((response) => {
+        this.getshowAllFp()
       });
     },
     sou(){
@@ -106,13 +126,16 @@ export default {
 
     },
     edit(){
-      let data= {"tp_title":this.title, "tp_content":this.content};
-      data={
+
+     let data={
         "stu_id": this.username,
-        "themepost":data
+        "tp_id":this.tp_id,
+        "fp_content":this.content
       };
-      this.$axios.post("http://127.0.0.1:8000/stu/newthemepost/",JSON.stringify(data)).then((response) => {
+      this.$axios.post("http://127.0.0.1:8000/stu/newfollowpost/",JSON.stringify(data)).then((response) => {
         this.dialogVisible=false
+        this.content = ""
+        this.getshowAllFp()
       });
     },
     handleMenuSelect(key, keyPath) {
@@ -215,11 +238,9 @@ export default {
   float: right;
 }
 .mian {
-  display: flex;
   margin: 0 10%;
 }
 .mian2 {
-  display: flex;
   width: 100%;
 }
 .mian1 {

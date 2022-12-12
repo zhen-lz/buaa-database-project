@@ -80,7 +80,7 @@
                           prefix-icon="el-icon-lock"></el-input>
               </el-form-item>
 
-              <el-button type="success" style="width: 100% ;margin-top: 12px" round @click="userRegister">登录
+              <el-button type="success" style="width: 100% ;margin-top: 12px" round @click="userRegister">注册
               </el-button>
 
             </el-form>
