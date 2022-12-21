@@ -7,7 +7,7 @@
         @select="handleMenuSelect"
         router
       >
-        <!--        <img src="src/assets/school.png">-->
+        <img src="../../../static/images/school.png" style="width: 15%">
         <el-menu-item index="1" route="/"
         ><span @click="logout">退出登录</span></el-menu-item
         >

@@ -7,11 +7,10 @@
     <el-header>
       <el-menu :default-active="menuActivateIndex" mode="horizontal" @select="handleMenuSelect" router>
         <img src="../../../static/images/school.png" style="width: 15%">
-        <el-menu-item index="1" route="/"><span @click="logout">退出登录</span></el-menu-item>
-        <el-menu-item index="2" route="/studentmain">个人主页</el-menu-item>
-        <!--        <el-menu-item index="3">已选课程</el-menu-item>-->
-        <el-menu-item index="4" route="/forum">讨论区</el-menu-item>
-        <el-menu-item index="5" route="/classground">课程广场</el-menu-item>
+        <el-menu-item index="1" route="/teacher/login"><span @click="logout">退出登录</span></el-menu-item>
+        <el-menu-item index="2" route="/teacher/main">个人主页</el-menu-item>
+        <el-menu-item index="4" route="/teacher/forum">讨论区</el-menu-item>
+        <el-menu-item index="5" route="/teacher/classground">课程广场</el-menu-item>
       </el-menu>
     </el-header>
 
@@ -32,6 +31,9 @@
             <el-button type="danger" round @click="searchClassDelete" v-show="searchClassDeleteShow">
               清除搜索
             </el-button>
+            <el-button type="primary" round @click="dialogVisible=true" v-show="!searchClassDeleteShow">
+              开设课程
+            </el-button>
           </div>
 
           <div style="margin: 20px 10%">
@@ -50,24 +52,17 @@
                       {{ item.course_name }}
                     </el-link>
                   </el-tooltip>
+
                   <el-rate v-model="item.course_rate" disabled show-score></el-rate>
                   <!--                  <stars v-model="item.course_rate"></stars>-->
                 </div>
 
                 <div style="position: absolute;right: 5%;">
-                  <el-button type="primary"
-                             :disabled="item.course_total >= item.course_capacity"
-                             v-show="!ifSelected(item,index)"
-                             @click="handleSelectClass(item,index)">选课
-                  </el-button>
-                  <el-button type="info"
-                             :disabled="true"
-                             style="margin: 0 0"
-                             v-show="ifSelected(item,index)">已选
-                  </el-button>
-                  <!--                  <el-button type="danger" v-show="true">退课</el-button>-->
+                  选课人数/课程容量
                   <div class="text-box">{{ item.course_total }}/{{ item.course_capacity }}</div>
+
                 </div>
+
               </div>
             </el-card>
 
@@ -97,50 +92,11 @@
                   <el-rate disabled v-model="item.course_rate"></el-rate>
                 </div>
                 <div style="margin: 0 2px">
-                  课程资料：
-                  <span v-for="(item,index) in classToMaterial(item.content.data.course_id)">
-                    {{ item.material_name }}
-                  </span>
-
-                </div>
-                <div style="margin: 0 2px">
                   课程简介：
                   <p style="word-wrap:break-word;">{{ item.content.data.course_intro }}</p>
                 </div>
               </div>
             </div>
-          </el-card>
-
-          <el-card
-            v-show="ifSelected(item.content.data,item.content.index)
-            && !classIntroDataList.filter(i => i.id === item.content.data.course_id).at(0).data.ifSubmit"
-            shadow="never"
-            style="margin: 20px 12%">
-            <div slot="header">
-              <el-tooltip effect="light" content="给你喜欢的课程投上一票吧！" placement="right-start">
-                <span style="font-weight: bold;font-size: large">课程评价</span>
-              </el-tooltip>
-            </div>
-
-            <div style="display: flex">
-              您觉得该课程：
-              <el-rate
-                v-model="classIntroDataList.filter(i => i.id === item.content.data.course_id).at(0).data.classRate"
-                :colors=" ['#99A9BF', '#F7BA2A', '#FF9900']"
-                show-text
-              ></el-rate>
-            </div>
-            <div>
-              <p>您也可以把您对于该课程的宝贵意见或看法写下来</p>
-              <el-input type="textarea"
-                        clearable placeholder="请输入您的意见或看法"
-                        :autosize="{minRows:3}"
-                        v-model="classIntroDataList.filter(i => i.id === item.content.data.course_id).at(0).data.classComment"></el-input>
-            </div>
-            <el-button type="primary"
-                       @click="classCommentSubmit(item.content.data,item.content.index)"
-                       style="margin: 15px 46%">提交
-            </el-button>
           </el-card>
 
           <div style="margin: 10px 12%;">
@@ -174,6 +130,51 @@
 
       </el-tabs>
 
+      <el-dialog
+        title="开设课程"
+        center
+        :visible.sync="dialogVisible"
+        width="38%"
+        before-close="closeDialog"
+        append-to-body
+        top="16vh">
+
+        <el-form ref="newClass" :model="newClass" label-width="80px">
+          <el-form-item label="课程代码" prop="course_id"
+                        :rules="[
+      { required: true, message: '课程代码不能为空'}]">
+            <el-input v-model="newClass.course_id"></el-input>
+          </el-form-item>
+
+          <el-form-item label="课程名称" prop="course_name"
+                        :rules="[
+      { required: true, message: '课程名称不能为空'}]">
+            <el-input v-model="newClass.course_name"></el-input>
+          </el-form-item>
+
+          <el-form-item label="课程容量" prop="course_capacity"
+                        :rules="[
+      { required: true, message: '课程容量不能为空'},
+      { type: 'number', message: '课程容量必须为数字值'}
+    ]">
+            <el-input v-model.number="newClass.course_capacity"></el-input>
+          </el-form-item>
+
+          <el-form-item label="课程简介">
+            <el-input v-model="newClass.course_intro"
+                      type="textarea"
+                      autosize
+                      :autosize="{ minRows: 2 }"></el-input>
+          </el-form-item>
+
+          <div style="text-align: center">
+            <el-button type="primary" @click="addNewClass">确定</el-button>
+            <el-button @click="closeDialog">取消</el-button>
+          </div>
+        </el-form>
+
+      </el-dialog>
+
     </el-main>
   </el-container>
 </template>
@@ -181,11 +182,10 @@
 <script>
 
 export default {
-  name: "ClassGround",
+  name: "TClassGround",
 
   created() {
     this.username = sessionStorage.username;
-    this.password = sessionStorage.password;
 
     this.getData();
   },
@@ -194,6 +194,15 @@ export default {
       username: '',
       password: '',
       menuActivateIndex: '5',
+
+      dialogVisible: false,
+      // new class
+      newClass: {
+        course_id: '',
+        course_name: '',
+        course_capacity: '',
+        course_intro: ''
+      },
 
       //  tabs
       tabsValue: '1',
@@ -205,17 +214,9 @@ export default {
       searchClassKeyword: '',
       searchClassDeleteShow: false,
       classAll: [],
-      classSelectedId: [],
 
       //  comments
       classIntroDataList: [],
-      // commentSubmitList: [],
-      // classRateList: {},
-      // classCommentList: {},
-      // classCommentsDataList: {},
-      // classCommentsData: [],
-      //
-      // test: [{id: 123, data: {rate: 2, comment: 123}}]
     }
   },
   methods: {
@@ -241,45 +242,6 @@ export default {
         }
         console.log(response.data)
       });
-      this.$axios.post('http://127.0.0.1:8000/stu/mycourse/', JSON.stringify({"stu_id": this.username})).then(response => {
-        console.log(response.data);
-        let ids = [];
-        let data = response.data.data;
-        for (var i = 0; i < data.length; i++) {
-          ids.push(data[i].course_id)
-        }
-        console.log(ids)
-        this.classSelectedId = ids
-      }).catch(response => {
-        console.log(response.error)
-      })
-
-    },
-    handleSelectClass(item, index) {
-      let data = {"username": this.username, 'data': item};
-      console.log(item)
-      this.$axios.post("http://127.0.0.1:8000/stu/add/", JSON.stringify(data)).then(response => {
-        console.log(response.data);
-
-        if (response.data.code === 0) {
-          this.$message({
-            message: "选课成功",
-            type: 'success'
-          })
-          this.getData();
-        } else {
-          this.$message({
-            message: "选课失败:" + response.data.prompt,
-            type: "warning"
-          })
-        }
-      }).catch(response => {
-        this.$message({
-          message: "服务器内部错误或服务器没有响应",
-          type: "error"
-        })
-        console.log(response.error);
-      })
     },
     removeTab(targetName) {
       let tabs = this.tabs;
@@ -325,14 +287,11 @@ export default {
         });
         this.tabsValue = newTabName;
 
-        let data = {classRate: 0, classComment: '', classCommentsData: [], ifSubmit: false}
+        let data = {classCommentsData: []}
         this.classIntroDataList.push({"id": item.course_id, "data": data})
 
         this.classGetCommentsData(item.course_id);
       }
-    },
-    ifSelected(item, index) {
-      return this.classSelectedId.includes(item.course_id)
     },
     searchClassClick() {
       // this.$axios.post("http://127.0.0.1:8000/search/"
@@ -342,42 +301,14 @@ export default {
       this.classAll = data;
       this.searchClassDeleteShow = true
 
-
     },
     searchClassDelete() {
       this.searchClassKeyword = '';
       this.searchClassDeleteShow = false;
       this.getData();
     },
-    classCommentSubmit(item, index) {
-      let comment = this.classIntroDataList.filter(i => i.id === item.course_id).at(0).data;
-      // console.log(comment)
-
-      this.$axios.post("http://127.0.0.1:8000/stu/comment/", JSON.stringify({
-        "stu_id": this.username,
-        "course_id": item.course_id,
-        "course_rate": item.course_rate,
-        "comment_content": comment.classComment
-      })).then(response => {
-        console.log(response)
-
-        comment.ifSubmit = true;
-        // if success
-        this.$alert("我们收到了您的评价，也祝愿您在北航的学习生活越来越顺利，实现自己的人生价值！", "Success", {
-            confirmButtonText: "Yes",
-            type: 'success',
-            center: true,
-            callback: action => {
-            }
-          }
-        )
-
-        this.classGetCommentsData(item.course_id)
-      }).catch(response => {
-          console.log(response)
-          this.$message({message: "系统故障，评价失败", type: "error"})
-        }
-      )
+    classToTeacher() {
+      return "佚民"
     },
     classGetCommentsData(id) {
       let comment = this.classIntroDataList.filter(i => i.id === id).at(0).data;
@@ -388,21 +319,52 @@ export default {
         console.log(response)
       })
     },
-    classToMaterial(id) {
-      let data = [{material_name: 'edef'}, {material_name: 'fhgfyhjbcgf'}];
-      this.$axios.post("http://127.0.0.1:8000/showcoursematerial/", JSON.stringify({"course_id": id}
-      )).then(response => {
-        data = response.data.data;
+    closeDialog() {
+      this.dialogVisible = false;
+      this.$refs["newClass"].resetFields()
+    },
+    addNewClass() {
+      this.$refs['newClass'].validate((valid) => {
+        if (valid) {
+          this.$axios.post("http://127.0.0.1:8000/teacher/add/", JSON.stringify({
+            "teacher_id": this.username,
+            "course": this.newClass
+          })).then(response => {
+            console.log(response);
+
+            if (response.data.code === 0) {
+              this.$message({
+                message: "添加课程成功",
+                type: 'success',
+              });
+
+              this.getData();
+
+              this.closeDialog()
+            } else {
+              this.$alert(response.data.prompt, {
+                type: 'error',
+                confirmButtonText: "确定",
+                callback: action => {
+                  this.$refs["newClass"].resetFields();
+                }
+              })
+            }
+          }).catch(error => {
+            console.log(error);
+
+            this.$message({
+              message: "服务器错误或响应超时",
+              type: 'error'
+            })
+          })
+
+        } else {
+          console.log("error submit");
+          return false;
+        }
       })
-      return data;
-    }, classToTeacher() {
-      return "佚民"
-      // let data = [];
-      // this.$axios.post("http://127.0.0.1:8000/showcoursematerial/", JSON.stringify({"course_id": id}
-      // )).then(response => {
-      //   data = response.data.data;
-      // })
-      // return data;
+
     }
 
 

@@ -2,7 +2,7 @@
   <el-container>
     <el-header>
       <el-menu :default-active="menuActivateIndex" mode="horizontal" @select="handleMenuSelect" router>
-        <!--        <img src="src/images/school.png">-->
+        <img src="../../../static/images/school.png" style="width: 15%">
         <el-menu-item index="1" route="/"><span @click="logout">退出登录</span></el-menu-item>
         <el-menu-item index="2">个人主页</el-menu-item>
         <!--        <el-menu-item index="3">已选课程</el-menu-item>-->
