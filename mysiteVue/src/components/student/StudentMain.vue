@@ -47,18 +47,13 @@
 
             <el-table-column
               label="授课老师"
-              prop="course_teacher_name">
+              prop="teacher_name">
             </el-table-column>
 
             <el-table-column
               label="课程信息"
               prop="course_intro">
             </el-table-column>
-
-            <!--            <el-table-column-->
-            <!--              label="上课时间"-->
-            <!--              prop="course_time">-->
-            <!--            </el-table-column>-->
 
           </el-table>
 
@@ -98,7 +93,35 @@
 
           </el-form>
         </el-tab-pane>
-        <el-tab-pane label="我的帖子" name="3"></el-tab-pane>
+
+<!--        <el-tab-pane label="我的帖子" name="3">-->
+<!--          <el-table-->
+<!--            :data="tpSelect"-->
+<!--            style="width: 100%"-->
+<!--            stripe>-->
+<!--            <el-table-column>-->
+<!--              <template slot-scope="scope">-->
+<!--                <el-button-->
+<!--                  size="mini"-->
+<!--                  type="danger"-->
+<!--                  @click="deleteClass(scope.$index,scope.row)">退选-->
+<!--                </el-button>-->
+<!--              </template>-->
+<!--            </el-table-column>-->
+
+<!--            <el-table-column-->
+<!--              label="帖子时间"-->
+<!--              prop="course_id">-->
+<!--            </el-table-column>-->
+
+<!--            <el-table-column-->
+<!--              label="帖子名称"-->
+<!--              prop="course_name">-->
+<!--            </el-table-column>-->
+
+<!--          </el-table>-->
+
+<!--        </el-tab-pane>-->
       </el-tabs>
 
 

@@ -34,8 +34,8 @@
                     <h3>{{ item.tp_title }}</h3>
                     <span @click="mainedit(item)">进入帖子</span>
                     </div>
-                    {{ item.tp_content }}
-                    {{ item.tp_time }}
+                    <span v-html="item.tp_content"></span>
+                    <span v-text="item.tp_time" style="font-size: xx-small;float: right" ></span>
                   </div>
                 </el-card>
               </div>
@@ -294,5 +294,9 @@ export default {
 }
 h3{
   margin: 0 0;
+}
+.box-card:hover{
+  margin-top: 7px;
+  background-color: #e8eaec;
 }
 </style>

@@ -115,7 +115,7 @@
 
           </el-form>
         </el-tab-pane>
-        <el-tab-pane label="我发布的帖子" name="3"></el-tab-pane>
+<!--        <el-tab-pane label="我发布的帖子" name="3"></el-tab-pane>-->
       </el-tabs>
 
       <el-dialog title="添加课程资料"
