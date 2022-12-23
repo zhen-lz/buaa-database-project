@@ -10,7 +10,7 @@
         <el-menu-item index="1" route="/teacher/login"><span @click="logout">退出登录</span></el-menu-item>
         <el-menu-item index="2" route="/teacher/main">个人主页</el-menu-item>
         <el-menu-item index="4" route="/teacher/forum">讨论区</el-menu-item>
-        <el-menu-item index="5" route="/teacher/classground">课程广场</el-menu-item>
+        <el-menu-item index="5" >课程广场</el-menu-item>
       </el-menu>
     </el-header>
 
@@ -223,7 +223,7 @@ export default {
     logout() {
       sessionStorage.clear();
 
-      this.$router.push('/')
+      this.$router.push('/teacher/login')
     },
     handleMenuSelect(key, keyPath) {
       console.log(key, keyPath)

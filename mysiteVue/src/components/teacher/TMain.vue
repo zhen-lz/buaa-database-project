@@ -52,7 +52,10 @@
 
             <el-table-column
               label="选课人数/课程容量"
-              prop="course_total/course_capacity">
+              >
+              <template slot-scope="scope">
+                {{scope.row.course_total}}/{{scope.row.course_capacity}}
+              </template>
             </el-table-column>
 
             <el-table-column>
