@@ -1,15 +1,15 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import LoginRegister from "../components/student/LoginRegister";
-import HelloWorld from "../components/HelloWorld";
 import TLogin from "../components/teacher/TLogin";
-import Main from "../components/Main";
 import StudentMain from "../components/student/StudentMain";
 import ClassGround from "../components/student/ClassGround";
 import ThemePost from "../components/student/ThemePost";
 import Forum from "../components/student/Forum";
 import TMain from "../components/teacher/TMain";
 import TClassGround from "../components/teacher/TClassGround";
+import TForum from "../components/teacher/TForum";
+import TTheamPost from "../components/teacher/TTheamPost";
 
 Vue.use(Router)
 
@@ -53,20 +53,11 @@ export default new Router({
     },
     {
       path: '/teacher/forum',
-      component: TMain
+      component: TForum
     },
     {
       path: '/teacher/themepost',
-      component: TMain
-    },
-
-    {
-      path: '/main',
-      component: Main
-    },
-    {
-      path: '/hello-world',
-      component: HelloWorld
+      component: TTheamPost
     },
 
 
