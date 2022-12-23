@@ -180,6 +180,7 @@ export default {
     },
 
     handleRegisterCancel() {
+      this.dialogVisible = false;
       this.$refs['registerForm'].resetFields();
     }
   }

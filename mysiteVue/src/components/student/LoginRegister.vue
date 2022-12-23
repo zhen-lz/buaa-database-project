@@ -76,7 +76,8 @@
                 <div slot="label">
                   <div style="font-size: 12px">再次输入密码</div>
                 </div>
-                <el-input class="input-info" show-password v-model="regUser.stu_password2" placeholder="请再次输入密码"
+                <el-input class="input-info" show-password v-model="regUser.stu_password2"
+                          placeholder="请再次输入密码"
                           prefix-icon="el-icon-lock"></el-input>
               </el-form-item>
 
@@ -120,6 +121,11 @@
               <el-button type="success" style="background-color:#257B5E;border: 1px solid #ffffff;" round
                          @click="changeToRegister">还没有账户？点击注册
               </el-button>
+
+              <div style="text-align: center;margin-top: 10px">
+                <el-link @click="teacherLogin">教师登录</el-link>
+              </div>
+
             </div>
           </div>
         </transition>
@@ -147,8 +153,8 @@
         </transition>
       </div>
     </div>
-
   </div>
+
 </template>
 
 <script>
@@ -306,8 +312,12 @@ export default {
           return false;
         }
       })
+    },
+    teacherLogin(){
+      this.$router.push("teacher/login");
     }
   },
+
 
 }
 </script>
