@@ -73,7 +73,7 @@
         <el-button type="primary" @click="edit"
         >确 定</el-button
         >
-      </span>np
+      </span>
     </el-dialog>
   </el-container>
 </template>

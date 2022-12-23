@@ -120,7 +120,7 @@ export default {
   },
   methods: {
     getshowalltp(){
-      this.$axios.post('http://127.0.0.1:8000/showalltp/',JSON.stringify({stu_id:sessionStorage.username})).then(res=>{
+      this.$axios.post('http://127.0.0.1:8000/stu/showalltp/',JSON.stringify({stu_id:sessionStorage.username})).then(res=>{
       this.tableData=res.data.data
       console.log(this.tableData)
     })

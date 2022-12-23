@@ -43,7 +43,7 @@
                 <img src="../../assets/logon.jpeg" alt="" />
                 <div>
                   <p>用户名:{{getinfolist.teacher_name}}</p>
-                  <p>学号:{{getinfolist.teacher_id}}</p>
+                  <p>教工号:{{getinfolist.teacher_id}}</p>
                   <p>已发帖子:{{getinfolist.postCnt}}</p>
                 </div>
               </div>
@@ -112,7 +112,7 @@ export default {
   },
   methods: {
     getshowalltp(){
-      this.$axios.post('http://127.0.0.1:8000/showalltp/',JSON.stringify({teacher_id:sessionStorage.username})).then(res=>{
+      this.$axios.post('http://127.0.0.1:8000/teacher/showalltp/',JSON.stringify({teacher_id:sessionStorage.username})).then(res=>{
       this.tableData=res.data.data
       console.log(this.tableData)
     })
@@ -125,7 +125,7 @@ export default {
       });
     },
     mainedit(item){
-      this.$router.push({path:'/themepost',query:item})
+      this.$router.push({path:'/teacher/themepost',query:item})
     },
     sou(){
       this.$axios.post("http://127.0.0.1:8000/searchtp/",
@@ -146,6 +146,7 @@ export default {
       })).then((response) => {
         this.dialogVisible=false
         this.getshowalltp()
+        this.getinfo()
       });
     },
     handleMenuSelect(key, keyPath) {
