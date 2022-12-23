@@ -86,7 +86,7 @@
                   课程代码：{{ item.content.data.course_id }}
                 </div>
                 <el-divider></el-divider>
-                <div style="margin: 0 2px">授课老师：{{ classToTeacher(item.content.data.course_id) }}</div>
+                <div style="margin: 0 2px">授课老师：{{ item.content.data.teacher_name }}</div>
                 <div style="margin: 0 2px;display: flex">
                   <span>课程评分：</span>
                   <el-rate disabled v-model="item.course_rate"></el-rate>

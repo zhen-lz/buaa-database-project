@@ -249,27 +249,34 @@ export default {
       this.info = this.info_backup;
     },
     deleteClass(index, row) {
-      let data = {'teacher_id': this.username, 'course': row}
-      this.$axios.post('http://127.0.0.1:8000/teacher/rmcourse/', JSON.stringify(data)).then(response => {
-        console.log(response.data);
+      this.$confirm("此操作将会删除该课程，并造成不可逆转的后果,是否继续？", "提示", {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let data = {'teacher_id': this.username, 'course': row}
+        this.$axios.post('http://127.0.0.1:8000/teacher/rmcourse/', JSON.stringify(data)).then(response => {
+          console.log(response.data);
 
-        if (response.data.code === 0) {
-          this.classSelect.splice(index, 1);
-          this.$msgbox({
-            message: '删除课程成功',
-            type: 'success'
-          })
-        } else {
-          this.$msgbox({
-            message: '删除课程失败',
-            type: "error"
-          })
-        }
-      }).catch(response => {
-        console.log(response.error)
+          if (response.data.code === 0) {
+            this.classSelect.splice(index, 1);
+            this.$msgbox({
+              message: '删除课程成功',
+              type: 'success'
+            })
+          } else {
+            this.$msgbox({
+              message: '删除课程失败',
+              type: "error"
+            })
+          }
+        }).catch(response => {
+          console.log(response.error)
+        })
+
+        this.classMine = this.classMine.filter(item => item.course_id !== row.course_id);
       })
 
-      this.classMine = this.classMine.filter(item => item.course_id !== row.course_id);
     },
     addCourseMaterial(index, row) {
       this.classMaterial.course_id = row.course_id;
