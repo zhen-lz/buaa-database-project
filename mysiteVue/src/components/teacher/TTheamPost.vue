@@ -117,7 +117,7 @@ export default {
     })
     },
     fan(){
-      this.$router.push("/forum");
+      this.$router.push("/teacher/forum");
     },
     delete1(item1){
       this.$axios.post("http://127.0.0.1:8000/teacher/deletefollowpost/",JSON.stringify({
