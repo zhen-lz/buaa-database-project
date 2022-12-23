@@ -160,7 +160,7 @@
             <el-input v-model.number="newClass.course_capacity"></el-input>
           </el-form-item>
 
-          <el-form-item label="课程简介">
+          <el-form-item label="课程简介" prop="course_intro">
             <el-input v-model="newClass.course_intro"
                       type="textarea"
                       autosize
@@ -201,7 +201,7 @@ export default {
         course_id: '',
         course_name: '',
         course_capacity: '',
-        course_intro: ''
+        course_intro: '',
       },
 
       //  tabs
