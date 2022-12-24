@@ -242,7 +242,7 @@ export default {
           let data = response.data.data
           data.forEach((item, index) => {
             item.course_rate = Number(item.course_rate)
-            item.course_material = this.classToMaterial(item.course_id)
+            item.push({"course_material": this.classToMaterial(item.course_id)})
           })
           this.classAll = data;
           // this.$message(response.data.message)
