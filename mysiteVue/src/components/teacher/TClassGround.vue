@@ -10,7 +10,7 @@
         <el-menu-item index="1" route="/teacher/login"><span @click="logout">退出登录</span></el-menu-item>
         <el-menu-item index="2" route="/teacher/main">个人主页</el-menu-item>
         <el-menu-item index="4" route="/teacher/forum">讨论区</el-menu-item>
-        <el-menu-item index="5" >课程广场</el-menu-item>
+        <el-menu-item index="5" route="/teacher/classground">课程广场</el-menu-item>
       </el-menu>
     </el-header>
 
@@ -91,6 +91,14 @@
                   <span>课程评分：</span>
                   <el-rate disabled v-model="item.course_rate"></el-rate>
                 </div>
+                <div style="margin: 0 2px">
+                  课程资料：
+                  <span v-for="(item,index) in classToMaterial(item.content.data.course_id)">
+                    {{ item.material_name }}
+                  </span>
+
+                </div>
+
                 <div style="margin: 0 2px">
                   课程简介：
                   <p style="word-wrap:break-word;">{{ item.content.data.course_intro }}</p>
@@ -365,7 +373,15 @@ export default {
         }
       })
 
-    }
+    },
+    classToMaterial(id) {
+      let data = [];
+      this.$axios.post("http://127.0.0.1:8000/showcoursematerial/", JSON.stringify({"course_id": id}
+      )).then(response => {
+        data = response.data.data;
+      })
+      return data;
+    },
 
 
   }

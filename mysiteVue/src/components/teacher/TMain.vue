@@ -4,7 +4,7 @@
       <el-menu :default-active="menuActivateIndex" mode="horizontal" @select="handleMenuSelect" router>
         <img src="../../../static/images/school.png" style="width: 15%">
         <el-menu-item index="1" route="/teacher/login"><span @click="logout">退出登录</span></el-menu-item>
-        <el-menu-item index="2">个人主页</el-menu-item>
+        <el-menu-item index="2" route="/teacher/main">个人主页</el-menu-item>
         <el-menu-item index="4" route="/teacher/forum">讨论区</el-menu-item>
         <el-menu-item index="5" route="/teacher/classground">课程广场</el-menu-item>
       </el-menu>
@@ -52,9 +52,9 @@
 
             <el-table-column
               label="选课人数/课程容量"
-              >
+            >
               <template slot-scope="scope">
-                {{scope.row.course_total}}/{{scope.row.course_capacity}}
+                {{ scope.row.course_total }}/{{ scope.row.course_capacity }}
               </template>
             </el-table-column>
 
@@ -115,7 +115,7 @@
 
           </el-form>
         </el-tab-pane>
-<!--        <el-tab-pane label="我发布的帖子" name="3"></el-tab-pane>-->
+        <!--        <el-tab-pane label="我发布的帖子" name="3"></el-tab-pane>-->
       </el-tabs>
 
       <el-dialog title="添加课程资料"
@@ -347,7 +347,7 @@ export default {
     logout() {
       sessionStorage.clear();
 
-      this.$router.push('/')
+      this.$router.push('/teacher/login')
     },
     initData() {
       let wrong = false;

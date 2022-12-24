@@ -4,7 +4,7 @@
       <el-menu :default-active="menuActivateIndex" mode="horizontal" @select="handleMenuSelect" router>
         <img src="../../../static/images/school.png" style="width: 15%">
         <el-menu-item index="1" route="/"><span @click="logout">退出登录</span></el-menu-item>
-        <el-menu-item index="2">个人主页</el-menu-item>
+        <el-menu-item index="2" route="/studentmain">个人主页</el-menu-item>
         <!--        <el-menu-item index="3">已选课程</el-menu-item>-->
         <el-menu-item index="4" route="/forum">讨论区</el-menu-item>
         <el-menu-item index="5" route="/classground">课程广场</el-menu-item>
