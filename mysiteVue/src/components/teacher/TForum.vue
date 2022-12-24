@@ -155,7 +155,7 @@ export default {
     logout() {
       sessionStorage.clear();
 
-      this.$router.push("/");
+      this.$router.push('/teacher/login')
     },
     addtitle() {
       this.dialogVisible = true;
