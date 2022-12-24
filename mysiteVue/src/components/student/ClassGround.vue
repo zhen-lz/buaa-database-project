@@ -98,8 +98,8 @@
                 </div>
                 <div style="margin: 0 2px">
                   课程资料：
-                  <span v-for="(item,index) in classToMaterial(item.content.data.course_id)">
-                    {{ item.material_name }}
+                  <span v-for="i in item.content.data.course_material">
+                    {{ i.material_name }}
                   </span>
 
                 </div>
@@ -232,6 +232,10 @@ export default {
         if (response.data.code === 0) {
           let data = response.data.data
           data.forEach((item, index) => {
+            this.$axios.post("http://127.0.0.1:8000/showcoursematerial/", JSON.stringify({"course_id": item.course_id}
+            )).then(response => {
+              item.course_material = response.data.data
+            })
             item.course_rate = Number(item.course_rate)
           })
           this.classAll = data;
