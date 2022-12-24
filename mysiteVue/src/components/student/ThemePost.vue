@@ -1,7 +1,7 @@
 <template>
   <el-container>
 
-   <el-header>
+    <el-header>
       <el-menu
         :default-active="menuActivateIndex"
         mode="horizontal"
@@ -26,26 +26,27 @@
             <div>
               <el-divider>楼主</el-divider>
               <div class="item">
-                <h3>帖子标题：{{  toplist.tp_title }}</h3>
-<!--                <h3>{{ toplist.tp_content }}</h3>-->
+                <h3>帖子标题：{{ toplist.tp_title }}</h3>
+                <!--                <h3>{{ toplist.tp_content }}</h3>-->
                 <div>
-                    <el-button style="height: 40px" @click="addtitle" type="primary" size="small">跟帖</el-button>
-                    <el-button style="height: 40px" type="primary" @click="fan" size="small">返回</el-button>
-                    </div>
+                  <el-button style="height: 40px" @click="addtitle" type="primary" size="small">跟帖</el-button>
+                  <el-button style="height: 40px" type="primary" @click="fan" size="small">返回</el-button>
+                </div>
               </div>
               <h3>帖子内容:</h3>
               <div style="margin-left: 80px;font-size: 17px"><span v-html="   toplist.tp_content" style=""></span></div>
-              <el-divider >跟帖</el-divider>
+              <el-divider>跟帖</el-divider>
               <div
                 v-for="(item1, index) in tableData"
                 :key="index"
                 class="mian1"
               >
-                <el-card class="box-card" >
+                <el-card class="box-card">
                   <div class="item">
                     <span>
                       <h3 style="float: left">{{ item1.stu_name }}:</h3>
-                      <span v-html="item1.fp_content" style="float: left;margin-top: 3px;margin-left: 10px;font-size: 15px"></span>
+                      <span v-html="item1.fp_content"
+                            style="float: left;margin-top: 3px;margin-left: 10px;font-size: 15px"></span>
                     </span>
                     <el-button style="height: 40px" @click="delete1(item1)" type="danger" size="small">删除</el-button>
                   </div>
@@ -66,7 +67,7 @@
       width="80%"
       :before-close="handleClose"
     >
-      <quill-editor  class="editor"  v-model="content" ref="customQuillEditor"  >
+      <quill-editor class="editor" v-model="content" ref="customQuillEditor">
       </quill-editor>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
@@ -89,70 +90,82 @@ export default {
       tableData: [],
       menuActivateIndex: "4",
       input: "",
-      title:"",
-      dialogVisible:false,
-      content:"",
-      tp_id:"",
-      username:"",
-      toplist:[]
+      title: "",
+      dialogVisible: false,
+      content: "",
+      tp_id: "",
+      username: "",
+      toplist: []
     };
   },
 
   created() {
-    this.username=sessionStorage.username;
+    this.username = sessionStorage.username;
 
   },
-  watch:{
-      $route: {
-      handler: function(val, oldVal) {
+  watch: {
+    $route: {
+      handler: function (val, oldVal) {
         console.log(val, oldVal)
-         this.tp_id = this.$route.query.tp_id
+        this.tp_id = this.$route.query.tp_id
         this.toplist = this.$route.query
         console.log(this.toplist)
         this.getshowAllFp()
       },
       immediate: true,
-       deep:true
+      deep: true
     }
   },
 
   methods: {
 
-    getshowAllFp(){
-      this.$axios.post('http://127.0.0.1:8000/showallfp/',JSON.stringify({tp_id:this.tp_id})).then(res=>{
-      this.tableData=res.data.data
-      console.log(this.tableData)
-    })
+    getshowAllFp() {
+      this.$axios.post('http://127.0.0.1:8000/showallfp/', JSON.stringify({tp_id: this.tp_id})).then(res => {
+        this.tableData = res.data.data
+        console.log(this.tableData)
+      })
     },
-    fan(){
+    fan() {
       this.$router.push("/forum");
     },
-    delete1(item1){
-      this.$axios.post("http://127.0.0.1:8000/stu/deletefollowpost/",JSON.stringify({
-        tp_id:this.tp_id,
-        stu_id:this.username,
-        fp_id:item1.fp_id
+    delete1(item1) {
+      this.$axios.post("http://127.0.0.1:8000/stu/deletefollowpost/", JSON.stringify({
+        tp_id: this.tp_id,
+        stu_id: this.username,
+        fp_id: item1.fp_id
       })).then((response) => {
+
+        if (response.data.code === 1) {
+          this.$alert(response.data.prompt, {
+            type: "error",
+            confirmButtonText: "确定",
+          })
+        } else {
+          this.$message({
+            type: 'success',
+            message: '删除成功'
+          })
+        }
         this.getshowAllFp()
       });
     },
-    sou(){
-      this.$axios.get("http://127.0.0.1:8000/searchtp/",{
-        tp_title:this.input,
+    sou() {
+      this.$axios.get("http://127.0.0.1:8000/searchtp/", {
+        tp_title: this.input,
       }).then((response) => {
         this.tableData = response.data.data;
       });
 
     },
-    edit(){
+    edit() {
 
-     let data={
+      let data = {
         "stu_id": this.username,
-        "tp_id":this.tp_id,
-        "fp_content":this.content
+        "tp_id": this.tp_id,
+        "fp_content": this.content
       };
-      this.$axios.post("http://127.0.0.1:8000/stu/newfollowpost/",JSON.stringify(data)).then((response) => {
-        this.dialogVisible=false
+      this.$axios.post("http://127.0.0.1:8000/stu/newfollowpost/", JSON.stringify(data)).then((response) => {
+        this.dialogVisible = false
         this.content = ""
         this.getshowAllFp()
       });
@@ -172,15 +185,15 @@ export default {
       console.log(index, row);
 
       this.dialogVisibleEdit = true;
-      this.editFrom = { ...row };
-      this.editInfo = new Array({ index: index, row: row });
+      this.editFrom = {...row};
+      this.editInfo = new Array({index: index, row: row});
       console.log(this.editInfo);
     },
     handleDelete(index, row) {
       console.log(index, row);
 
       this.$axios
-        .post("/delete", { msg: "delete", data: row })
+        .post("/delete", {msg: "delete", data: row})
         .then((response) => {
           console.log(response.data);
 
@@ -191,13 +204,13 @@ export default {
               type: "success",
             });
           } else {
-            this.$message({ message: "删除失败", type: "error" });
+            this.$message({message: "删除失败", type: "error"});
           }
         });
     },
     handleAdd() {
       this.$axios
-        .post("/add", { msg: "add", data: this.addFrom })
+        .post("/add", {msg: "add", data: this.addFrom})
         .then((response) => {
           console.log(response.data);
 
@@ -211,7 +224,7 @@ export default {
             console.log(this.tableData);
             this.dialogVisible = false;
           } else {
-            this.$message({ message: "添加失败", type: "error" });
+            this.$message({message: "添加失败", type: "error"});
           }
         });
     },
@@ -220,7 +233,8 @@ export default {
         .then((_) => {
           done();
         })
-        .catch((_) => {});
+        .catch((_) => {
+        });
     },
     handleEditSubmit() {
       this.$axios
@@ -243,7 +257,7 @@ export default {
 
             this.dialogVisibleEdit = false;
           } else {
-            this.$message({ message: "添加失败", type: "error" });
+            this.$message({message: "添加失败", type: "error"});
           }
         });
     },
@@ -256,18 +270,23 @@ export default {
 .el-menu-item {
   float: right;
 }
+
 .mian {
   margin: 0 10%;
 }
+
 .mian2 {
   width: 100%;
 }
+
 .mian1 {
 
 }
+
 .el-card__body {
   height: 50px;
 }
+
 /* .el-card__body, .el-main {
   display: flex;
 } */
@@ -276,20 +295,24 @@ export default {
   text-align: center;
   width: 1000px;
 }
-.box-card:hover{
+
+.box-card:hover {
   margin-top: 7px;
   background-color: #e8eaec;
 }
+
 .titleimg {
   display: flex;
 }
+
 .item > img {
   width: 80px;
   height: 80px;
   border-radius: 50%;
   margin-right: 20px;
 }
-.item{
+
+.item {
   display: flex;
   justify-content: space-between;
 }
