@@ -94,7 +94,7 @@
                 <div style="margin: 0 2px">授课老师：{{ item.content.data.teacher_name }}</div>
                 <div style="margin: 0 2px;display: flex">
                   <span>课程评分：</span>
-                  <el-rate disabled v-model="item.course_rate"></el-rate>
+                  <el-rate disabled v-model="item.content.data.course_rate"></el-rate>
                 </div>
                 <div style="margin: 0 2px">
                   课程资料：
@@ -361,8 +361,8 @@ export default {
       this.$axios.post("http://127.0.0.1:8000/stu/comment/", JSON.stringify({
         "stu_id": this.username,
         "course_id": item.course_id,
-        "course_rate": item.course_rate,
-        "comment_content": comment.classComment
+        "course_rate": comment.classRate,
+        "comment_content": comment.classComment,
       })).then(response => {
         console.log(response)
 
@@ -378,6 +378,7 @@ export default {
         )
 
         this.classGetCommentsData(item.course_id)
+        this.getData()
       }).catch(response => {
           console.log(response)
           this.$message({message: "系统故障，评价失败", type: "error"})
