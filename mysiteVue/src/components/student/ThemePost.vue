@@ -44,7 +44,7 @@
                 <el-card class="box-card">
                   <div class="item">
                     <span>
-                      <h3 style="float: left">{{ item1.stu_name }}:</h3>
+                      <h3 style="float: left">{{ item1.teacher_name }}{{ item1.stu_name }}:</h3>
                       <span v-html="item1.fp_content"
                             style="float: left;margin-top: 3px;margin-left: 10px;font-size: 15px"></span>
                     </span>
