@@ -266,6 +266,7 @@ export default {
             message: "选课成功",
             type: 'success'
           })
+          this.searchClassDelete();
           this.getData();
         } else {
           this.$message({
