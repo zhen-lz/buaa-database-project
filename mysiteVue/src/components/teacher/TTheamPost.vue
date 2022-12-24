@@ -126,6 +126,18 @@ export default {
         teacher_id: this.username,
         fp_id: item1.fp_id
       })).then((response) => {
+        if (response.data.code === 1) {
+          this.$alert(response.data.prompt, {
+            type: "error",
+            confirmButtonText: "确定",
+          })
+        } else {
+          this.$message({
+            type: 'success',
+            message: '删除成功'
+          })
+        }
+
         this.getshowAllFp()
       });
     },

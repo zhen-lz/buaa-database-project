@@ -379,6 +379,7 @@ export default {
 
         this.classGetCommentsData(item.course_id)
         this.getData()
+        item.course_rate = response.data.course_rate
         // console.log(this.classAll.filter(i => i.course_id === item.course_id).at(0).course_rate)
         // this.tabs.filter(i => i.content.data.course_id === item.course_id).at(0).content.data.course_rate = this.classAll.filter(i => i.course_id === item.course_id).at(0).course_rate
         // item.course_rate = this.classAll.filter(i => i.course_id === item.course_id).at(0).course_rate
